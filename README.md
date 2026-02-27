@@ -52,7 +52,7 @@ After launching, open http://localhost:8501 in your browser to start using BioLo
   
 2. Store Files
 * Go to the Store Files page.
-*Choose upload mode: Standard Upload (≤200 MB) or Large File Upload (streaming, any size).
+* Choose upload mode: Standard Upload (≤200 MB) or Large File Upload (streaming, any size).
 * Select a file and adjust the slice size (default recommended based on file size).
 * Choose encryption method:
   
