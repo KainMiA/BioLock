@@ -1,4 +1,4 @@
-# BioLock: A Prototype for Secure Distribution Storage of Biological Data
+# BioLock: A Prototype System for Secure Distribution Storage of Biological Data
 
 BioLock is a prototype end-to-end encrypted file storage system designed for sensitive biomedical data. It implements a "split-encrypt-distribute" paradigm by dividing files into multiple encrypted slices and generating a separate index file, ensuring that only the data owner can fully restore the original data. Built with Streamlit, BioLock provides an intuitive web interface, supports streaming upload of large files, user authentication, password reset, and file integrity verification. BioLock aims to offer researchers, clinicians, and patients a lightweight, secure, and easy-to-use data protection tool.
 
