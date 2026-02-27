@@ -1,10 +1,4 @@
-# BioLock
-BioLock: A Prototype for Secure Distribution Storage of Biological Data
-
-* https://img.shields.io/badge/License-Apache%25202.0-blue.svg
-* https://img.shields.io/badge/python-3.8+-blue.svg
-* https://img.shields.io/badge/Streamlit-1.28+-red.svg
-* https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg
+# BioLock: A Prototype for Secure Distribution Storage of Biological Data
 
 BioLock is a prototype end-to-end encrypted file storage system designed for sensitive biomedical data. It implements a "split-encrypt-distribute" paradigm by dividing files into multiple encrypted slices and generating a separate index file, ensuring that only the data owner can fully restore the original data. Built with Streamlit, BioLock provides an intuitive web interface, supports streaming upload of large files, user authentication, password reset, and file integrity verification. BioLock aims to offer researchers, clinicians, and patients a lightweight, secure, and easy-to-use data protection tool.
 
@@ -25,6 +19,30 @@ Backend: Python 3.8+
 Cryptography: cryptography (AES-GCM, PBKDF2), bcrypt
 Web Framework: Streamlit
 Data Persistence: Local file system (JSON indexes + encrypted slices)
+
+## 🚀 Quick Start
+
+### Installation
+1. Clone the repository
+```
+git clone https://github.com/
+cd biolock
+```
+2. Create a virtual environment
+```
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+```
+3. Install dependencies
+```
+pip install -r requirements.txt
+```
+### Run
+```
+streamlit run main.py
+```
+After launching, open http://localhost:8501 in your browser to start using BioLock.
 
 ## 📖 User Guide
 
@@ -53,21 +71,4 @@ Data Persistence: Local file system (JSON indexes + encrypted slices)
 * On the Settings page, you can update your profile or change your password.
 
 
-📊 Performance Benchmarks
 
-We tested BioLock with synthetic data of various sizes and a real single-cell transcriptome sequencing dataset (137 GB). Results are summarized below:
-
-File Size	Operation	Time (s)	Peak Memory (MB)
-1 MB	Encrypt	0.52	98.0
-Decrypt	0.89	97.8
-10 MB	Encrypt	0.81	112.3
-Decrypt	1.02	105.6
-100 MB	Encrypt	4.35	204.8
-Decrypt	4.62	123.5
-1 GB	Encrypt	50.89	400.7
-Decrypt	34.90	459.3
-10 GB	Encrypt	681.81	3,092.5
-Decrypt	395.53	2,222.1
-137 GB	Encrypt	7,608.8	3,102.7
-Decrypt	4,817.5	2,601.0
-| Test environment: Intel Xeon Gold 6230 @ 2.1GHz, 64 GB RAM, SSD storage. Encryption/decryption used streaming mode; memory usage remained far below file size.
