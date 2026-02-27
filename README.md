@@ -55,8 +55,11 @@ After launching, open http://localhost:8501 in your browser to start using BioLo
 *Choose upload mode: Standard Upload (≤200 MB) or Large File Upload (streaming, any size).
 * Select a file and adjust the slice size (default recommended based on file size).
 * Choose encryption method:
+  
   Use my password: encrypt with the key derived from your login password.
+  
   Custom key: enter or generate a new key (recommended for different files).
+  
 * Click "Store File" and wait for completion. The system will display a file ID and encryption status.
 
 3. Restore Files
