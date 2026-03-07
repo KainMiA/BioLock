@@ -2,7 +2,7 @@
 
 BioLock is a prototype end-to-end encrypted file storage system designed for sensitive biomedical data. It implements a "split-encrypt-distribute" paradigm by dividing files into multiple encrypted slices and generating a separate index file, ensuring that only the data owner can fully restore the original data. Built with Streamlit, BioLock provides an intuitive web interface, supports streaming upload of large files, user authentication, password reset, and file integrity verification. BioLock aims to offer researchers, clinicians, and patients a lightweight, secure, and easy-to-use data protection tool.
 
-<div align="center"> <img src="https://github.com/KainMiA/SEMA/blob/main/SEMA_diagram.png" alt="SEMA" width="800"/> </div>
+<div align="left"> <img src="https://github.com/KainMiA/BioLock/blob/main/ScreenShot_2026-03-07_150942_018.png" alt="BioLock" width="800"/> </div>
 
 ## ✨ Features
 
