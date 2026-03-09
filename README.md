@@ -17,7 +17,7 @@ Open & Transparent: Fully open-source code with auditable cryptographic logic, m
 
 ## 📦 Technology Stack
 
-Backend: Python 3.8+
+Backend: Python 3.9+
 Cryptography: cryptography (AES-GCM, PBKDF2), bcrypt
 Web Framework: Streamlit
 Data Persistence: Local file system (JSON indexes + encrypted slices)
