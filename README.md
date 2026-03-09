@@ -27,14 +27,13 @@ Data Persistence: Local file system (JSON indexes + encrypted slices)
 ### Installation
 1. Clone the repository
 ```
-git clone https://github.com/
-cd biolock
+git clone https://github.com/KainMiA/BioLock
+cd BioLockApp_29260309
 ```
 2. Create a virtual environment
 ```
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-venv\Scripts\activate     # Windows
+conda create -n biolock python=3.9.23
+conda activate biolock
 ```
 3. Install dependencies
 ```
@@ -42,7 +41,7 @@ pip install -r requirements.txt
 ```
 ### Run
 ```
-streamlit run main.py
+streamlit run app.py
 ```
 After launching, open http://localhost:8501 in your browser to start using BioLock.
 
