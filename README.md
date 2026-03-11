@@ -11,7 +11,7 @@ Chunked Storage: Large files are split into adjustable slices (1–500 MB) and p
 User Authentication: bcrypt password hashing + PBKDF2 key derivation (100,000 iterations) with password reset capability.
 Flexible Key Management: Users can either use a password-derived key or provide a custom key, decoupling the encryption key from the password.
 Integrity Verification: Each slice stores a SHA-256 hash; restoration automatically verifies these hashes to detect tampering.
-Large File Support: Streaming upload/download handles files far exceeding available RAM (tested with 137 GB single-cell sequencing data).
+Large File Support: Streaming upload/download handles files far exceeding available RAM (tested with 120 GB data).
 User-Friendly Interface: Built with Streamlit, featuring a dashboard, file manager, key manager, settings, and light/dark theme toggle.
 Open & Transparent: Fully open-source code with auditable cryptographic logic, meeting academic reproducibility requirements.
 
