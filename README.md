@@ -28,7 +28,7 @@ Data Persistence: Local file system (JSON indexes + encrypted slices)
 1. Clone the repository
 ```
 git clone https://github.com/KainMiA/BioLock
-cd BioLockApp_29260309
+cd BioLockApp_20260309
 ```
 2. Create a conda environment
 ```
