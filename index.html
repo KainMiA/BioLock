@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioLock · Secure File Storage</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Inter + Outfit for headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #f4f6fb 0%, #eef1f7 100%);
+      color: #1e1e2f;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.2s;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.dark {
+      background: linear-gradient(145deg, #0b0e14 0%, #121826 100%);
+      color: #eef2fb;
+    }
+
+    /* smooth scroll */
+    .main {
+      scroll-behavior: smooth;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Layout */
+    .app {
+      display: flex;
+      min-height: 100vh;
+      backdrop-filter: blur(2px);
+    }
+
+    /* ---------- Sidebar (glass) ---------- */
+    .sidebar {
+      width: 300px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 30px rgba(0, 0, 0, 0.02);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    body.dark .sidebar {
+      background: rgba(20, 28, 40, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 4px 0 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-info {
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark .user-info {
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+
+    .user-info h3 {
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .user-info h3 i {
+      font-size: 1.6rem;
+      color: #4f46e5;
+      background: rgba(79, 70, 229, 0.12);
+      padding: 6px;
+      border-radius: 14px;
+    }
+
+    body.dark .user-info h3 i {
+      color: #a5b4fc;
+      background: rgba(165, 180, 252, 0.15);
+    }
+
+    .user-info p {
+      color: #5b6876;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 4px;
+    }
+
+    body.dark .user-info p {
+      color: #a0b3d9;
+    }
+
+    .nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 12px 18px;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #3a4450;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    body.dark .nav-btn {
+      color: #cbd5e8;
+    }
+
+    .nav-btn i {
+      width: 22px;
+      font-size: 1.2rem;
+      text-align: center;
+      color: #5b6778;
+      transition: color 0.2s;
+    }
+
+    body.dark .nav-btn i {
+      color: #8f9eb5;
+    }
+
+    .nav-btn:hover {
+      background: rgba(79, 70, 229, 0.08);
+      transform: translateX(4px);
+    }
+
+    body.dark .nav-btn:hover {
+      background: rgba(129, 140, 248, 0.1);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: white;
+      box-shadow: 0 8px 16px -6px rgba(79, 70, 229, 0.25);
+    }
+
+    .nav-btn.active i {
+      color: white;
+    }
+
+    body.dark .nav-btn.active {
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      box-shadow: 0 8px 16px -6px rgba(99, 102, 241, 0.4);
+    }
+
+    .logout-btn {
+      margin-top: 24px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 18px;
+      font-weight: 600;
+      color: #2d3a4a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    body.dark .logout-btn {
+      background: rgba(30, 41, 59, 0.7);
+      border-color: rgba(255,255,255,0.06);
+      color: #e0e7ff;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.2);
+      color: #b91c1c;
+    }
+
+    body.dark .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+    }
+
+    /* ---------- Main Content ---------- */
+    .main {
+      flex: 1;
+      padding: 36px 44px;
+      overflow-y: auto;
+    }
+
+    /* Cards with glass effect */
+    .content-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 32px;
+      padding: 28px;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0,0,0,0.02);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      margin-bottom: 28px;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    body.dark .content-card {
+      background: rgba(20, 28, 40, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Metric cards */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 28px;
+      padding: 28px 20px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    body.dark .metric-card {
+      background: rgba(30, 41, 59, 0.5);
+      border-color: rgba(255,255,255,0.04);
+      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.3);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 36px -12px rgba(79, 70, 229, 0.15);
+    }
+
+    .metric-icon {
+      font-size: 2.5rem;
+      margin-bottom: 18px;
+      color: #4f46e5;
+      background: rgba(79, 70, 229, 0.08);
+      width: 64px;
+      height: 64px;
+      line-height: 64px;
+      text-align: center;
+      border-radius: 20px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    body.dark .metric-icon {
+      color: #a5b4fc;
+      background: rgba(165, 180, 252, 0.12);
+    }
+
+    .metric-value {
+      font-size: 2.8rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #1e1e2f, #2d3a4a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    body.dark .metric-value {
+      background: linear-gradient(135deg, #f0f4ff, #c7d2fe);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      color: #4b556b;
+    }
+
+    body.dark .metric-label {
+      color: #9ab0d6;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+    }
+
+    .badge-encrypted {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0369a1;
+      border: 1px solid rgba(2, 132, 199, 0.2);
+    }
+
+    body.dark .badge-encrypted {
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+      border-color: rgba(56,189,248,0.2);
+    }
+
+    .badge-plain {
+      background: rgba(22, 163, 74, 0.1);
+      color: #15803d;
+      border: 1px solid rgba(22,163,74,0.15);
+    }
+
+    body.dark .badge-plain {
+      background: rgba(74, 222, 128, 0.12);
+      color: #86efac;
+      border-color: rgba(74,222,128,0.15);
+    }
+
+    /* File rows */
+    .file-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark .file-row {
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+
+    .file-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.01em;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: white;
+      box-shadow: 0 12px 24px -8px rgba(79, 70, 229, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.02);
+      box-shadow: 0 18px 30px -8px rgba(79, 70, 229, 0.4);
+      background: linear-gradient(135deg, #4338ca, #4f46e5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(8px);
+      color: #2d3a4a;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+    }
+
+    body.dark .btn-secondary {
+      background: rgba(30, 41, 59, 0.6);
+      color: #e2e8f0;
+      border-color: rgba(255,255,255,0.06);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.8);
+      transform: translateY(-2px);
+    }
+
+    body.dark .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.8);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Progress */
+    .progress-bar {
+      height: 8px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    body.dark .progress-bar {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4f46e5, #a78bfa);
+      border-radius: 20px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px #a78bfa;
+    }
+
+    /* Login container (glass) */
+    .login-container {
+      max-width: 560px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 48px;
+      padding: 48px 44px;
+      box-shadow: 0 30px 60px -20px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.3s;
+    }
+
+    body.dark .login-container {
+      background: rgba(20, 28, 40, 0.8);
+      box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.05);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      padding-bottom: 6px;
+    }
+
+    body.dark .tabs {
+      border-bottom-color: rgba(255,255,255,0.08);
+    }
+
+    .tab {
+      padding: 10px 24px;
+      background: none;
+      border: none;
+      font-weight: 600;
+      color: #5b6876;
+      cursor: pointer;
+      border-radius: 40px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+
+    body.dark .tab {
+      color: #a0b3d9;
+    }
+
+    .tab.active {
+      background: rgba(79, 70, 229, 0.1);
+      color: #4f46e5;
+    }
+
+    body.dark .tab.active {
+      background: rgba(129, 140, 248, 0.15);
+      color: #c7d2fe;
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.dark label {
+      color: #cbd5e8;
+    }
+
+    label i {
+      width: 18px;
+      color: #4f46e5;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid rgba(0,0,0,0.06);
+      border-radius: 24px;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body.dark input, body.dark select {
+      background: rgba(15, 23, 42, 0.7);
+      border-color: rgba(255,255,255,0.1);
+      color: #f1f5f9;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 4px rgba(79,70,229,0.15);
+      background: white;
+    }
+
+    body.dark input:focus {
+      background: #0f172a;
+      box-shadow: 0 0 0 4px rgba(129,140,248,0.2);
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 40px;
+    }
+
+    body.dark .theme-toggle {
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* Utilities */
+    .hidden { display: none !important; }
+    .flex { display: flex; gap: 16px; }
+    .mt-4 { margin-top: 24px; }
+    hr {
+      margin: 32px 0;
+      border: none;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    body.dark hr {
+      border-top-color: rgba(255,255,255,0.06);
+    }
+
+    i {
+      transition: color 0.2s;
+    }
+
+    /* Smooth transitions for theme */
+    body, .sidebar, .content-card, .metric-card, .btn, input {
+      transition: background 0.3s ease, border-color 0.3s, box-shadow 0.3s, color 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+    <!-- Login view (glass) -->
+    <div id="loginView" class="login-container">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div style="display: inline-flex; background: rgba(79,70,229,0.1); padding: 14px 20px; border-radius: 60px; margin-bottom: 16px;">
+          <i class="fas fa-dna" style="font-size: 2.4rem; color: #4f46e5;"></i>
+        </div>
+        <h1 style="font-size: 2.6rem; font-weight: 700; margin-bottom: 8px;">
+          <span style="background: linear-gradient(135deg, #4f46e5, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent;">BioLock</span>
+        </h1>
+        <p style="color: #4b556b; font-weight: 500; letter-spacing: -0.01em;"><i class="fas fa-shield-halved"></i> Encrypted Biomedical Storage</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="login"><i class="fas fa-arrow-right-to-bracket"></i> Login</button>
+        <button class="tab" data-tab="register"><i class="fas fa-user-plus"></i> Register</button>
+        <button class="tab" data-tab="reset"><i class="fas fa-key"></i> Reset</button>
+      </div>
+
+      <!-- Login form -->
+      <div id="tab-login">
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Username</label>
+          <input type="text" id="loginUsername" placeholder="Your username">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary btn-block" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+        <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.7;"><i class="far fa-lightbulb"></i> Demo: any credentials work</p>
+      </div>
+
+      <!-- Register -->
+      <div id="tab-register" class="hidden">
+        <div class="flex">
+          <div class="form-group" style="flex:1"><label><i class="fas fa-id-card"></i> Full name</label><input id="regFullName" placeholder="Dr. Jane Smith"></div>
+          <div class="form-group" style="flex:1"><label><i class="fas fa-at"></i> Username</label><input id="regUsername" placeholder="janes"></div>
+        </div>
+        <div class="form-group"><label><i class="fas fa-envelope"></i> Email</label><input type="email" id="regEmail" placeholder="jane@biolock.io"></div>
+        <div class="form-group"><label><i class="fas fa-lock"></i> Password</label><input type="password" id="regPassword" placeholder="Create strong password"></div>
+        <div class="form-group"><label><i class="fas fa-check-circle"></i> Confirm</label><input type="password" id="regConfirm" placeholder="Confirm password"></div>
+        <button class="btn btn-primary btn-block" id="registerBtn"><i class="fas fa-user-check"></i> Create Account</button>
+      </div>
+
+      <!-- Reset -->
+      <div id="tab-reset" class="hidden">
+        <div class="form-group"><label><i class="fas fa-envelope"></i> Email</label><input id="resetEmail" placeholder="registered@email.com"></div>
+        <button class="btn btn-primary btn-block" id="sendCodeBtn"><i class="fas fa-paper-plane"></i> Send code</button>
+        <div id="resetCodeSection" class="hidden mt-4">
+          <div class="form-group"><label><i class="fas fa-hashtag"></i> Code</label><input id="resetCode" placeholder="123456"></div>
+          <div class="form-group"><label><i class="fas fa-lock"></i> New password</label><input type="password" id="newPassword"></div>
+          <div class="form-group"><label><i class="fas fa-check-double"></i> Confirm</label><input type="password" id="confirmNewPassword"></div>
+          <button class="btn btn-primary btn-block" id="resetPasswordBtn"><i class="fas fa-sync-alt"></i> Reset Password</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main app -->
+    <div id="mainView" class="app hidden">
+      <div class="sidebar">
+        <div class="user-info">
+          <h3><i class="fas fa-circle-user"></i> <span id="sidebarUsername">User</span></h3>
+          <p><i class="fas fa-envelope"></i> <span id="sidebarEmail">user@example.com</span></p>
+        </div>
+        <div class="theme-toggle">
+          <i class="fas fa-moon" id="themeIcon"></i>
+          <span style="font-weight: 500;">Dark mode</span>
+          <label style="margin-left: auto; cursor: pointer; display: flex; align-items: center;">
+            <input type="checkbox" id="themeToggle" style="width: 18px; height: 18px; accent-color: #4f46e5;"> 
+          </label>
+        </div>
+        <div class="nav" id="navContainer"></div>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+      <div class="main" id="contentArea"></div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      'use strict';
+
+      let currentUser = null;
+      let currentPage = 'dashboard';
+      let theme = 'light';
+
+      const mockFiles = [
+        { id: 'f1', name: 'brain_mri_scan.dcm', size: 45320000, encrypted: true, created: '2025-03-15' },
+        { id: 'f2', name: 'genomic_variants.vcf', size: 128000000, encrypted: true, created: '2025-03-10' },
+        { id: 'f3', name: 'pathology_report.pdf', size: 2500000, encrypted: false, created: '2025-03-01' },
+        { id: 'f4', name: 'ecg_recording.dat', size: 8900000, encrypted: true, created: '2025-02-28' },
+      ];
+
+      const loginView = document.getElementById('loginView');
+      const mainView = document.getElementById('mainView');
+      const contentArea = document.getElementById('contentArea');
+      const navContainer = document.getElementById('navContainer');
+      const sidebarUsername = document.getElementById('sidebarUsername');
+      const sidebarEmail = document.getElementById('sidebarEmail');
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+
+      const tabs = document.querySelectorAll('.tab');
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const tabReset = document.getElementById('tab-reset');
+
+      function formatFileSize(b) {
+        if (b === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(b) / Math.log(k));
+        return parseFloat((b / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+      }
+
+      function applyTheme() {
+        document.body.classList.toggle('dark', theme === 'dark');
+        themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      }
+
+      function toggleTheme() {
+        theme = theme === 'light' ? 'dark' : 'light';
+        applyTheme();
+        renderPage(currentPage);
+      }
+
+      function setPage(page) {
+        currentPage = page;
+        renderPage(page);
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === page));
+      }
+
+      function renderSidebar() {
+        const pages = [
+          { label: 'Dashboard', page: 'dashboard', icon: 'fa-chart-pie' },
+          { label: 'Store Files', page: 'storage', icon: 'fa-cloud-upload-alt' },
+          { label: 'Restore Files', page: 'restore', icon: 'fa-download' },
+          { label: 'My Files', page: 'my_files', icon: 'fa-folder-tree' },
+          { label: 'Encryption Keys', page: 'keys', icon: 'fa-key' },
+          { label: 'Settings', page: 'settings', icon: 'fa-sliders' },
+          { label: 'Help Center', page: 'help', icon: 'fa-life-ring' },
+        ];
+        navContainer.innerHTML = pages.map(p => 
+          `<button class="nav-btn" data-page="${p.page}"><i class="fas ${p.icon}"></i> ${p.label}</button>`
+        ).join('');
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => setPage(btn.dataset.page)));
+        document.querySelector(`.nav-btn[data-page="${currentPage}"]`)?.classList.add('active');
+      }
+
+      function renderPage(page) {
+        if (!currentUser) return;
+        let html = '';
+        if (page === 'dashboard') html = renderDashboard();
+        else if (page === 'storage') html = renderStorage();
+        else if (page === 'restore') html = renderRestore();
+        else if (page === 'my_files') html = renderMyFiles();
+        else if (page === 'keys') html = renderKeys();
+        else if (page === 'settings') html = renderSettings();
+        else if (page === 'help') html = renderHelp();
+        else html = renderDashboard();
+        contentArea.innerHTML = html;
+        if (page === 'storage') attachStorageListeners();
+        if (page === 'restore') attachRestoreListeners();
+        if (page === 'settings') attachSettingsListeners();
+        if (page === 'keys') attachKeysListeners();
+      }
+
+      function renderDashboard() {
+        const totalFiles = mockFiles.length;
+        const totalSize = mockFiles.reduce((a,b)=>a+b.size,0);
+        const encrypted = mockFiles.filter(f=>f.encrypted).length;
+        return `
+          <h1><i class="fas fa-wave-square" style="background: linear-gradient(145deg, #4f46e5, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent;"></i> Welcome, ${currentUser.fullName || currentUser.username}</h1>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="metric-icon"><i class="fas fa-file-medical"></i></div><div class="metric-value">${totalFiles}</div><div class="metric-label">Files</div></div>
+            <div class="metric-card"><div class="metric-icon"><i class="fas fa-hard-drive"></i></div><div class="metric-value">${formatFileSize(totalSize)}</div><div class="metric-label">Storage</div></div>
+            <div class="metric-card"><div class="metric-icon"><i class="fas fa-shield-halved"></i></div><div class="metric-value">${encrypted}</div><div class="metric-label">Encrypted</div></div>
+          </div>
+          <div class="content-card">
+            <h2><i class="fas fa-clock-rotate-left"></i> Recent activity</h2>
+            ${mockFiles.slice(0,4).map(f=>`
+              <div class="file-row">
+                <div><i class="fas fa-file-waveform" style="margin-right: 12px; color: #4f46e5;"></i><strong>${f.name}</strong><br><span style="font-size:0.8rem; opacity:0.7;"><i class="far fa-calendar"></i> ${f.created}</span></div>
+                <div><i class="fas fa-weight-hanging"></i> ${formatFileSize(f.size)}</div>
+                <div><span class="badge ${f.encrypted?'badge-encrypted':'badge-plain'}"><i class="fas ${f.encrypted?'fa-lock':'fa-lock-open'}"></i> ${f.encrypted?'AES-256':'Plain'}</span></div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      function renderStorage() {
+        return `
+          <h1><i class="fas fa-cloud-upload-alt"></i> Secure Upload</h1>
+          <div class="content-card">
+            <div style="margin-bottom:24px"><label><i class="fas fa-upload"></i> Mode</label><div style="display:flex; gap:24px;"><label><input type="radio" name="uploadMode" value="standard" checked> Standard</label><label><input type="radio" name="uploadMode" value="large"> Large streaming</label></div></div>
+            <div class="form-group"><label><i class="fas fa-folder-open"></i> Select file</label><input type="file" id="fileInput"></div>
+            <div id="fileInfo" style="margin:12px 0"></div>
+            <details style="margin:24px 0"><summary style="font-weight:600; cursor:pointer;"><i class="fas fa-sliders"></i> Advanced</summary>
+              <div style="margin-top:20px"><label><i class="fas fa-puzzle-piece"></i> Slice: <span id="sliceValue">10 MB</span></label><input type="range" id="sliceSlider" min="1" max="500" value="10" style="width:100%"></div>
+              <div style="margin-top:20px"><label><i class="fas fa-shield"></i> Encryption</label><div style="display:flex; gap:24px"><label><input type="radio" name="encrypt" value="enabled" checked> AES-256-GCM</label><label><input type="radio" name="encrypt" value="disabled"> None</label></div></div>
+              <div id="keySource" style="margin-top:20px"><label><i class="fas fa-key"></i> Key source</label><div style="display:flex; gap:24px"><label><input type="radio" name="keySrc" value="password" checked> Password-derived</label><label><input type="radio" name="keySrc" value="custom"> Custom</label></div><div id="customKeyInput" style="margin-top:16px; display:none"><input type="password" id="customKey" placeholder="Paste encryption key"></div></div>
+            </details>
+            <button class="btn btn-primary btn-block" id="storeBtn"><i class="fas fa-lock"></i> Encrypt & Store</button>
+            <div id="uploadProgress" style="margin-top:24px; display:none"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><p id="progressText"><i class="fas fa-spinner fa-pulse"></i> Initializing...</p></div>
+          </div>
+        `;
+      }
+
+      function renderRestore() {
+        return `
+          <h1><i class="fas fa-download"></i> Restore</h1><div class="content-card">
+          ${mockFiles.length?mockFiles.map(f=>`<div class="file-row"><div><i class="fas fa-file"></i> <strong>${f.name}</strong><br><span style="font-size:0.8rem">${formatFileSize(f.size)}</span></div><div><span class="badge ${f.encrypted?'badge-encrypted':'badge-plain'}"><i class="fas ${f.encrypted?'fa-lock':'fa-lock-open'}"></i> ${f.encrypted?'Encrypted':'Plain'}</span></div><button class="btn btn-secondary select-restore" data-id="${f.id}"><i class="fas fa-chevron-right"></i> Select</button></div>`).join(''):'<p>No files</p>'}
+          <div id="restorePanel" style="margin-top:24px"></div></div>
+        `;
+      }
+
+      function renderMyFiles() {
+        return `
+          <h1><i class="fas fa-folder-tree"></i> My Files</h1><div class="content-card">
+          <div style="display:flex; gap:24px; margin-bottom:24px"><div><i class="fas fa-file"></i> ${mockFiles.length} files</div><div><i class="fas fa-database"></i> ${formatFileSize(mockFiles.reduce((a,b)=>a+b.size,0))}</div></div>
+          <input type="text" placeholder="Search files..." id="searchInput" style="margin-bottom:24px">
+          ${mockFiles.map(f=>`<div class="file-row"><div><i class="fas fa-file"></i> <strong>${f.name}</strong><br><span style="font-size:0.8rem">ID: ${f.id}</span></div><div>${formatFileSize(f.size)}</div><div><span class="badge ${f.encrypted?'badge-encrypted':'badge-plain'}"><i class="fas ${f.encrypted?'fa-lock':'fa-lock-open'}"></i> ${f.encrypted?'Encrypted':'Plain'}</span></div><button class="btn btn-secondary restore-btn" data-id="${f.id}"><i class="fas fa-download"></i> Restore</button></div>`).join('')}
+          </div>
+        `;
+      }
+
+      function renderKeys() {
+        return `
+          <h1><i class="fas fa-key"></i> Key Management</h1><div class="content-card">
+          <h3><i class="fas fa-user-lock"></i> Derived Key</h3><p>From your password (PBKDF2).</p><input type="password" value="••••••••••••••••" disabled style="margin:12px 0"><button class="btn btn-secondary" id="showKeyBtn"><i class="fas fa-eye"></i> Reveal</button>
+          <hr><h3><i class="fas fa-wand-magic-sparkles"></i> Generate Custom Key</h3><button class="btn btn-primary" id="genKeyBtn"><i class="fas fa-plus"></i> Generate AES-256</button><div id="generatedKey" style="margin-top:20px"></div>
+          </div>
+        `;
+      }
+
+      function renderSettings() {
+        return `
+          <h1><i class="fas fa-sliders"></i> Settings</h1><div class="content-card">
+          <h3><i class="fas fa-user-pen"></i> Profile</h3>
+          <div class="form-group"><label><i class="fas fa-id-card"></i> Full name</label><input id="settingsFullName" value="${currentUser.fullName||''}"></div>
+          <div class="form-group"><label><i class="fas fa-envelope"></i> Email</label><input id="settingsEmail" value="${currentUser.email||''}"></div>
+          <div class="form-group"><label><i class="fas fa-user"></i> Username</label><input value="${currentUser.username}" disabled></div>
+          <button class="btn btn-primary" id="updateProfileBtn"><i class="fas fa-save"></i> Update</button>
+          <hr><h3><i class="fas fa-lock"></i> Change password</h3>
+          <div class="form-group"><label>Current</label><input type="password" id="currentPwd"></div><div class="form-group"><label>New</label><input type="password" id="newPwd"></div><div class="form-group"><label>Confirm</label><input type="password" id="confirmPwd"></div>
+          <button class="btn btn-primary" id="changePwdBtn"><i class="fas fa-key"></i> Change</button>
+          </div>
+        `;
+      }
+
+      function renderHelp() {
+        return `<h1><i class="fas fa-life-ring"></i> Help Center</h1><div class="content-card"><details open><summary><i class="fas fa-rocket"></i> Quick start</summary><p>1. Store a file with encryption.<br>2. Restore anytime.</p></details><details><summary><i class="fas fa-shield"></i> Security</summary><p>AES-256-GCM, client-side.</p></details></div>`;
+      }
+
+      function attachStorageListeners() {
+        const slice = document.getElementById('sliceSlider'), span = document.getElementById('sliceValue');
+        if(slice) slice.addEventListener('input', e=> span.textContent = e.target.value+' MB');
+        document.querySelectorAll('input[name="encrypt"], input[name="keySrc"]').forEach(r=>r.addEventListener('change',()=>{
+          const enc = document.querySelector('input[name="encrypt"]:checked')?.value==='enabled';
+          const cust = document.querySelector('input[name="keySrc"]:checked')?.value==='custom';
+          document.getElementById('customKeyInput').style.display = (enc && cust) ? 'block' : 'none';
+        }));
+        document.getElementById('fileInput')?.addEventListener('change',e=>{
+          const f = e.target.files[0];
+          document.getElementById('fileInfo').innerHTML = f?`<i class="fas fa-file"></i> ${f.name} (${formatFileSize(f.size)})`:'';
+        });
+        document.getElementById('storeBtn')?.addEventListener('click',()=>{
+          const p = document.getElementById('uploadProgress'), fill = document.getElementById('progressFill'), txt = document.getElementById('progressText');
+          p.style.display='block'; let w=0;
+          const int = setInterval(()=>{ w+=10; fill.style.width=w+'%'; txt.innerHTML = w<100?`<i class="fas fa-spinner fa-pulse"></i> Encrypting... ${w}%`:`<i class="fas fa-check-circle"></i> ✅ Stored securely`; if(w>=100){clearInterval(int); setTimeout(()=>p.style.display='none',3000);}},200);
+        });
+      }
+
+      function attachRestoreListeners() {
+        document.querySelectorAll('.select-restore').forEach(b=>b.addEventListener('click',e=>{
+          const id = e.target.closest('button').dataset.id, f = mockFiles.find(x=>x.id===id);
+          document.getElementById('restorePanel').innerHTML = `
+            <h3><i class="fas fa-file-export"></i> Restore: ${f.name}</h3>
+            <div class="form-group"><label>Directory</label><input value="restored"></div>
+            <div class="form-group"><label>Filename</label><input value="${f.name}"></div>
+            ${f.encrypted?'<div class="form-group"><label>Decryption key</label><input type="password" placeholder="Enter key"></div>':''}
+            <button class="btn btn-primary" id="doRestore"><i class="fas fa-download"></i> Restore</button>
+          `;
+          document.getElementById('doRestore')?.addEventListener('click',()=>alert('Demo: File would be downloaded.'));
+        }));
+      }
+
+      function attachSettingsListeners() {
+        document.getElementById('updateProfileBtn')?.addEventListener('click',()=>{
+          const n = document.getElementById('settingsFullName').value, e = document.getElementById('settingsEmail').value;
+          currentUser.fullName = n; currentUser.email = e;
+          sidebarUsername.textContent = n || currentUser.username; sidebarEmail.textContent = e;
+          alert('Profile updated (demo)');
+        });
+        document.getElementById('changePwdBtn')?.addEventListener('click',()=>alert('Password change demo.'));
+      }
+
+      function attachKeysListeners() {
+        document.getElementById('showKeyBtn')?.addEventListener('click',function(){
+          const inp = this.previousElementSibling;
+          inp.type='text'; inp.value='biolock-demo-key-32b'; setTimeout(()=>inp.type='password',4000);
+        });
+        document.getElementById('genKeyBtn')?.addEventListener('click',function(){
+          const key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))));
+          document.getElementById('generatedKey').innerHTML = `<textarea rows="3" style="width:100%">${key}</textarea><p style="color:#b45309;"><i class="fas fa-triangle-exclamation"></i> Save this key offline.</p>`;
+        });
+      }
+
+      function login(u) {
+        currentUser = { username: u, email: u+'@biolock.demo', fullName: u.split('.').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ') };
+        sidebarUsername.textContent = currentUser.fullName; sidebarEmail.textContent = currentUser.email;
+        loginView.classList.add('hidden'); mainView.classList.remove('hidden');
+        renderSidebar(); setPage('dashboard'); applyTheme();
+      }
+
+      function logout() { currentUser=null; mainView.classList.add('hidden'); loginView.classList.remove('hidden'); }
+
+      tabs.forEach(t=>t.addEventListener('click',()=>{
+        const tab = t.dataset.tab; tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active');
+        tabLogin.classList.add('hidden'); tabRegister.classList.add('hidden'); tabReset.classList.add('hidden');
+        if(tab==='login') tabLogin.classList.remove('hidden');
+        else if(tab==='register') tabRegister.classList.remove('hidden');
+        else if(tab==='reset') tabReset.classList.remove('hidden');
+      }));
+
+      document.getElementById('loginBtn').addEventListener('click',()=>{ const u = document.getElementById('loginUsername').value.trim(); if(u) login(u); else alert('Enter a username'); });
+      document.getElementById('registerBtn').addEventListener('click',()=>{ const u = document.getElementById('regUsername').value.trim(); if(u){ alert('Account created!'); document.querySelector('[data-tab="login"]').click(); } });
+      document.getElementById('sendCodeBtn').addEventListener('click',()=>{ const e = document.getElementById('resetEmail').value; if(e){ document.getElementById('resetCodeSection').classList.remove('hidden'); alert(`Demo code: 123456 sent to ${e}`); } });
+      document.getElementById('resetPasswordBtn').addEventListener('click',()=>{ alert('Password reset'); document.querySelector('[data-tab="login"]').click(); });
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+      themeToggle.addEventListener('change', toggleTheme);
+      applyTheme();
+    })();
+  </script>
+</body>
+</html>
