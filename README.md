@@ -4,8 +4,6 @@ BioLock is a prototype end-to-end encrypted file storage system designed for sen
 
 <div align="left"> <img src="ScreenShot_2026-03-07_150942_018.png" alt="BioLock" width="800"/> </div>
 
-> This is a corrected version of the original BioLock prototype by [KainMiA](https://github.com/KainMiA/BioLock). See the [Changelog](#-changelog) for what was fixed.
-
 ## ✨ Features
 
 * End-to-End Encryption: Each data slice is independently encrypted with AES-256-GCM. Every slice is authenticated together with its file ID and position, so tampering, reordering or truncating slices is detected.
