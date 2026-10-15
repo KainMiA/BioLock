@@ -29,7 +29,7 @@ BioLock is a prototype end-to-end encrypted file storage system designed for sen
 ### Installation
 1. Clone this repository (copy its URL from the green **Code** button on GitHub), or download it with **Code → Download ZIP** and unzip it
 ```
-git clone (https://github.com/KainMiA/BioLock
+git clone https://github.com/KainMiA/BioLock
 cd BioLock/BioLockApp_20260309
 ```
 2. Create a conda environment
