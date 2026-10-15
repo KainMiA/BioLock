@@ -38,6 +38,7 @@ conda create -n biolock python=3.11
 conda activate biolock
 ```
 (An existing `python=3.9` environment from the earlier instructions also works.)
+
 3. Install dependencies
 ```
 pip install -r requirements.txt
